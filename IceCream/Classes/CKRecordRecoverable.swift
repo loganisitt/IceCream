@@ -56,12 +56,16 @@ extension CKRecordRecoverable where Self: Object {
                 o.setValue(recordValue, forKey: prop.name)
                 continue
             }
-            
+
             switch prop.type {
             case .int:
                 recordValue = record.value(forKey: prop.name) as? Int
             case .string:
-                recordValue = record.value(forKey: prop.name) as? String
+                if let string = record.value(forKey: prop.name) as? String {
+                    recordValue = string
+                } else if let recordID = record.value(forKey: prop.name) as? CKRecord.ID {
+                    recordValue = recordID.recordName
+                }
             case .bool:
                 recordValue = record.value(forKey: prop.name) as? Bool
             case .date:
